@@ -45,8 +45,7 @@ public class JwtTokenProvider {
     }
 
     public Long getUserId(String token) {
-        return ((Number) getClaims(token)
-                .get("userId")).longValue();
+        return ((Number) getClaims(token).get("userId")).longValue();
     }
 
     public String getRole(String token) {
