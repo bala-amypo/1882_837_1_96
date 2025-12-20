@@ -85,6 +85,12 @@
             <version>2.3.0</version>
         </dependency>
         <dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.1.1</version> <!-- make sure this exists in Maven Central -->
+</dependency>
+
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>7.8.0</version>
