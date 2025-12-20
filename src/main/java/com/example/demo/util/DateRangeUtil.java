@@ -7,11 +7,11 @@ import java.util.List;
 public class DateRangeUtil {
 
     public static List<LocalDate> daysBetween(LocalDate start, LocalDate end) {
-        List<LocalDate> dates = new ArrayList<>();
+        List<LocalDate> list = new ArrayList<>();
         while (!start.isAfter(end)) {
-            dates.add(start);
+            list.add(start);
             start = start.plusDays(1);
         }
-        return dates;
+        return list;
     }
 }
