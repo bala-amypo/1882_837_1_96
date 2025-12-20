@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface TeamCapacityConfigRepository
         extends JpaRepository<TeamCapacityConfig, Long> {
 
-    Optional<TeamCapacityConfig> find
+    Optional<TeamCapacityConfig> findByTeamName(String teamName);
+}
