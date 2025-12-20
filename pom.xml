@@ -33,11 +33,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-      <dependency>
+    <dependency>
     <groupId>mysql</groupId>
     <artifactId>mysql-connector-j</artifactId>
-    <version>8.1.0</version> <!-- or 8.0.33, check latest on Maven Central -->
+    <version>8.0.33</version>
 </dependency>
+
 
 
 
