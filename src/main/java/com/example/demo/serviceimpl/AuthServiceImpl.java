@@ -17,11 +17,9 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder encoder;
     private final JwtTokenProvider tokenProvider;
 
-    public AuthServiceImpl(
-            UserAccountRepository userRepo,
-            BCryptPasswordEncoder encoder,
-            JwtTokenProvider tokenProvider
-    ) {
+    public AuthServiceImpl(UserAccountRepository userRepo,
+                           BCryptPasswordEncoder encoder,
+                           JwtTokenProvider tokenProvider) {
         this.userRepo = userRepo;
         this.encoder = encoder;
         this.tokenProvider = tokenProvider;
@@ -41,10 +39,7 @@ public class AuthServiceImpl implements AuthService {
 
         AuthResponse response = new AuthResponse();
         response.setToken(token);
-        response.setUserId(user.getId());
-        response.setEmail(user.getEmail());
         response.setRole(user.getRole());
-
         return response;
     }
 }
