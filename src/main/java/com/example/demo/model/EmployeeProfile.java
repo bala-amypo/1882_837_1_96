@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,25 +14,17 @@ public class EmployeeProfile {
     @Column(unique = true, nullable = false)
     private String employeeId;
 
-    @Column(nullable = false)
-    private String fullName;
-
     @Column(unique = true, nullable = false)
     private String email;
 
+    private String fullName;
     private String teamName;
     private String role;
-    private Boolean active = true;
+    private boolean active = true;
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToMany
-    @JoinTable(
-            name = "employee_colleagues",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "colleague_id")
-    )
-    private Set<EmployeeProfile> colleagues;
+    private Set<EmployeeProfile> colleagues = new HashSet<>();
 
-    // Constructors, getters, setters
-    public EmployeeProfile() {}
+    // Getters and setters
 }
