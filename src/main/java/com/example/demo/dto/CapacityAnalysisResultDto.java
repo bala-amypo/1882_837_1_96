@@ -1,56 +1,29 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.CapacityAlert;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Map;
 
 public class CapacityAnalysisResultDto {
 
-    private String teamName;
-    private int totalHeadcount;
-    private int availableCapacity;
-    private boolean belowThreshold;
-    private List<CapacityAlert> alerts;
+    private boolean risky;
+    private Map<LocalDate, Double> capacityByDate;
 
     public CapacityAnalysisResultDto() {
     }
 
-    public String getTeamName() {
-        return teamName;
+    public boolean isRisky() {
+        return risky;
     }
 
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
+    public void setRisky(boolean risky) {
+        this.risky = risky;
     }
 
-    public int getTotalHeadcount() {
-        return totalHeadcount;
+    public Map<LocalDate, Double> getCapacityByDate() {
+        return capacityByDate;
     }
 
-    public void setTotalHeadcount(int totalHeadcount) {
-        this.totalHeadcount = totalHeadcount;
-    }
-
-    public int getAvailableCapacity() {
-        return availableCapacity;
-    }
-
-    public void setAvailableCapacity(int availableCapacity) {
-        this.availableCapacity = availableCapacity;
-    }
-
-    public boolean isBelowThreshold() {
-        return belowThreshold;
-    }
-
-    public void setBelowThreshold(boolean belowThreshold) {
-        this.belowThreshold = belowThreshold;
-    }
-
-    public List<CapacityAlert> getAlerts() {
-        return alerts;
-    }
-
-    public void setAlerts(List<CapacityAlert> alerts) {
-        this.alerts = alerts;
+    public void setCapacityByDate(Map<LocalDate, Double> capacityByDate) {
+        this.capacityByDate = capacityByDate;
     }
 }
