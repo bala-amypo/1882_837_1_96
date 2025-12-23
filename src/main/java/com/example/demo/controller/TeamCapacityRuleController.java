@@ -2,41 +2,34 @@ package com.example.demo.controller;
 
 import com.example.demo.model.TeamCapacityConfig;
 import com.example.demo.service.TeamCapacityRuleService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/capacity-rules")
-@Tag(name = "Capacity Rules")
 public class TeamCapacityRuleController {
-
-    private final TeamCapacityRuleService capacityService;
-
-    public TeamCapacityRuleController(TeamCapacityRuleService capacityService) {
-        this.capacityService = capacityService;
+    
+    private final TeamCapacityRuleService capacityRuleService;
+    
+    public TeamCapacityRuleController(TeamCapacityRuleService capacityRuleService) {
+        this.capacityRuleService = capacityRuleService;
     }
-
+    
     @PostMapping
-    @Operation(summary = "Create team capacity rule")
-    public TeamCapacityConfig create(@RequestBody TeamCapacityConfig config) {
-        return capacityService.createRule(config);
+    public ResponseEntity<TeamCapacityConfig> create(@RequestBody TeamCapacityConfig config) {
+        TeamCapacityConfig created = capacityRuleService.createRule(config);
+        return ResponseEntity.ok(created);
     }
-
+    
     @PutMapping("/{id}")
-    @Operation(summary = "Update team capacity rule")
-    public TeamCapacityConfig update(
-            @PathVariable Long id,
-            @RequestBody TeamCapacityConfig config
-    ) {
-        return capacityService.updateRule(id, config);
+    public ResponseEntity<TeamCapacityConfig> update(@PathVariable Long id, @RequestBody TeamCapacityConfig config) {
+        TeamCapacityConfig updated = capacityRuleService.updateRule(id, config);
+        return ResponseEntity.ok(updated);
     }
-
+    
     @GetMapping("/team/{teamName}")
-    @Operation(summary = "Get capacity rule by team")
-    public TeamCapacityConfig getByTeam(
-            @PathVariable String teamName
-    ) {
-        return capacityService.getRuleByTeam(teamName);
+    public ResponseEntity<TeamCapacityConfig> getByTeam(@PathVariable String teamName) {
+        TeamCapacityConfig config = capacityRuleService.getRuleByTeam(teamName);
+        return ResponseEntity.ok(config);
     }
 }

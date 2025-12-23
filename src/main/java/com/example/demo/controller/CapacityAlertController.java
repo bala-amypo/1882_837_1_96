@@ -1,51 +1,46 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.CapacityAnalysisResultDto;
 import com.example.demo.model.CapacityAlert;
 import com.example.demo.repository.CapacityAlertRepository;
-import com.example.demo.service.CapacityAnalysisService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/capacity-alerts")
-@Tag(name = "Capacity Alerts")
 public class CapacityAlertController {
-
-    private final CapacityAnalysisService analysisService;
+    
     private final CapacityAlertRepository alertRepository;
-
-    public CapacityAlertController(
-            CapacityAnalysisService analysisService,
-            CapacityAlertRepository alertRepository
-    ) {
-        this.analysisService = analysisService;
+    
+    public CapacityAlertController(CapacityAlertRepository alertRepository) {
         this.alertRepository = alertRepository;
     }
-
-    @PostMapping("/analyze")
-    @Operation(summary = "Analyze team capacity and generate alerts")
-    public CapacityAnalysisResultDto analyze(
-            @RequestParam String teamName,
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate
-    ) {
-        return analysisService.analyzeTeamCapacity(teamName, startDate, endDate);
+    
+    @PostMapping
+    public ResponseEntity<CapacityAlert> create(@RequestBody CapacityAlert alert) {
+        CapacityAlert saved = alertRepository.save(alert);
+        return ResponseEntity.ok(saved);
     }
-
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<CapacityAlert> getById(@PathVariable Long id) {
+        return alertRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
     @GetMapping("/team/{teamName}")
-    @Operation(summary = "Get capacity alerts by team and date range")
-    public List<CapacityAlert> getAlerts(
-            @PathVariable String teamName,
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate
-    ) {
-        return alertRepository.findByTeamNameAndDateBetween(
-                teamName, startDate, endDate
-        );
+    public ResponseEntity<List<CapacityAlert>> getAlerts(@PathVariable String teamName,
+                                                        @RequestParam LocalDate start,
+                                                        @RequestParam LocalDate end) {
+        List<CapacityAlert> alerts = alertRepository.findByTeamNameAndDateBetween(teamName, start, end);
+        return ResponseEntity.ok(alerts);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        alertRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
