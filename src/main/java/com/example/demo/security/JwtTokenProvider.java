@@ -26,21 +26,20 @@ public class JwtTokenProvider {
         try {
             Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token);
             return true;
-        } catch (Exception ex) { return false; }
+        } catch (Exception e) { return false; }
     }
 
     public String getEmail(String token) {
-        return Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token)
-                .getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody().getSubject();
     }
 
-    // Required by tests: getUserId
+    // REQUIRED BY TESTS
     public Long getUserId(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody();
         return Long.valueOf(claims.get("userId").toString());
     }
 
-    // Required by tests: getRole
+    // REQUIRED BY TESTS
     public String getRole(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody();
         return claims.get("role").toString();

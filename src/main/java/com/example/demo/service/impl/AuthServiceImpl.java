@@ -16,7 +16,7 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
 
-    // Manual constructor matches order: (Repository, Encoder, Provider)
+    // CONSTRUCTOR ORDER MUST BE: (UserAccountRepository, BCryptPasswordEncoder, JwtTokenProvider)
     public AuthServiceImpl(UserAccountRepository userRepo, 
                            BCryptPasswordEncoder passwordEncoder, 
                            JwtTokenProvider tokenProvider) {
