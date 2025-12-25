@@ -18,7 +18,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     private final LeaveRequestRepository leaveRepo;
     private final EmployeeProfileRepository empRepo;
 
-    // Manual constructor injection
+    // Manual Constructor Injection (Fixes @RequiredArgsConstructor error)
     public LeaveRequestServiceImpl(LeaveRequestRepository leaveRepo, EmployeeProfileRepository empRepo) {
         this.leaveRepo = leaveRepo;
         this.empRepo = empRepo;
@@ -71,6 +71,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     }
 
     private LeaveRequestDto mapToDto(LeaveRequest l) {
+        // Correctly calls Getters we manually added
         return new LeaveRequestDto(l.getId(), l.getEmployee().getId(), l.getStartDate(), 
                                   l.getEndDate(), l.getType(), l.getStatus(), l.getReason());
     }
