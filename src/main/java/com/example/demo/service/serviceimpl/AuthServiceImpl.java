@@ -32,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String token = tokenProvider.generateToken(user);
+        // Correct constructor for AuthResponse
         return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole());
     }
 }
