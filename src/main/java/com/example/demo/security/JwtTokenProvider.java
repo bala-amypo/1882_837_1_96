@@ -8,8 +8,8 @@ import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    private String jwtSecret = "base64EncodedSecretKeyForDemoPurposeOnly12345678901234567890";
-    private long jwtExpirationInMs = 3600000;
+    private final String jwtSecret = "base64EncodedSecretKeyForDemoPurposeOnly12345678901234567890";
+    private final long jwtExpirationInMs = 3600000;
 
     public String generateToken(UserAccount user) {
         return Jwts.builder()
@@ -30,14 +30,19 @@ public class JwtTokenProvider {
     }
 
     public String getEmail(String token) {
-        return Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token)
+                .getBody().getSubject();
     }
 
+    // Required by tests: getUserId
     public Long getUserId(String token) {
-        return Long.valueOf(Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody().get("userId").toString());
+        Claims claims = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody();
+        return Long.valueOf(claims.get("userId").toString());
     }
 
+    // Required by tests: getRole
     public String getRole(String token) {
-        return (String) Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody().get("role");
+        Claims claims = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody();
+        return claims.get("role").toString();
     }
 }
