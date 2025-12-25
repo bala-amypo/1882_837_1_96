@@ -1,13 +1,13 @@
 package com.example.demo;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-class DemoApplicationTests {
+@SpringBootApplication
+public class DemoApplication {
 
-    @Test
-    void contextLoads() {
-        // Simple test to ensure the build completes
-        assertTrue(true);
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
     }
+
 }
