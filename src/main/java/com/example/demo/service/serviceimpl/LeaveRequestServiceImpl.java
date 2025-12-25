@@ -8,22 +8,26 @@ import com.example.demo.model.LeaveRequest;
 import com.example.demo.repository.EmployeeProfileRepository;
 import com.example.demo.repository.LeaveRequestRepository;
 import com.example.demo.service.LeaveRequestService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class LeaveRequestServiceImpl implements LeaveRequestService {
     private final LeaveRequestRepository leaveRepo;
     private final EmployeeProfileRepository empRepo;
 
+    // Manual constructor injection
+    public LeaveRequestServiceImpl(LeaveRequestRepository leaveRepo, EmployeeProfileRepository empRepo) {
+        this.leaveRepo = leaveRepo;
+        this.empRepo = empRepo;
+    }
+
     @Override
     public LeaveRequestDto create(LeaveRequestDto dto) {
         if (dto.getStartDate().isAfter(dto.getEndDate())) {
-            throw new BadRequestException("Start date cannot be in the future of end date");
+            throw new BadRequestException("Start date cannot be after end date");
         }
         EmployeeProfile emp = empRepo.findById(dto.getEmployeeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
@@ -36,7 +40,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         leave.setStatus("PENDING");
         leave.setReason(dto.getReason());
         
-        return mapToDto(leaveRepo.save(leave));
+        LeaveRequest saved = leaveRepo.save(leave);
+        return mapToDto(saved);
     }
 
     @Override
@@ -61,10 +66,12 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     @Override
     public List<LeaveRequestDto> getOverlappingForTeam(String teamName, LocalDate start, LocalDate end) {
-        return leaveRepo.findApprovedOverlappingForTeam(teamName, start, end).stream().map(this::mapToDto).collect(Collectors.toList());
+        return leaveRepo.findApprovedOverlappingForTeam(teamName, start, end).stream()
+                .map(this::mapToDto).collect(Collectors.toList());
     }
 
     private LeaveRequestDto mapToDto(LeaveRequest l) {
-        return new LeaveRequestDto(l.getId(), l.getEmployee().getId(), l.getStartDate(), l.getEndDate(), l.getType(), l.getStatus(), l.getReason());
+        return new LeaveRequestDto(l.getId(), l.getEmployee().getId(), l.getStartDate(), 
+                                  l.getEndDate(), l.getType(), l.getStatus(), l.getReason());
     }
 }
