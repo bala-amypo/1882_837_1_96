@@ -1,24 +1,30 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class UserAccount {
+public class TeamCapacityConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String username;
-
     @Column(unique = true)
-    private String email;
+    private String teamName;
+    private Integer totalHeadcount;
+    private Integer minCapacityPercent;
 
-    private String password;
-    private String role;
+    public TeamCapacityConfig() {}
+    public TeamCapacityConfig(String teamName, Integer totalHeadcount, Integer minCapacityPercent) {
+        this.teamName = teamName;
+        this.totalHeadcount = totalHeadcount;
+        this.minCapacityPercent = minCapacityPercent;
+    }
 
-    @OneToOne
-    @JoinColumn(name = "employee_profile_id")
-    private EmployeeProfile employeeProfile;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getTeamName() { return teamName; }
+    public void setTeamName(String teamName) { this.teamName = teamName; }
+    public Integer getTotalHeadcount() { return totalHeadcount; }
+    public void setTotalHeadcount(Integer totalHeadcount) { this.totalHeadcount = totalHeadcount; }
+    public Integer getMinCapacityPercent() { return minCapacityPercent; }
+    public void setMinCapacityPercent(Integer minCapacityPercent) { this.minCapacityPercent = minCapacityPercent; }
 }
