@@ -9,17 +9,16 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long> {
-    
     List<LeaveRequest> findByEmployee(EmployeeProfile employee);
 
-    // Matches the HQL requirement for Test Priority 64
+    // Required for HQL Overlapping test
     @Query("SELECT l FROM LeaveRequest l WHERE l.status = 'APPROVED' AND l.employee.teamName = :team " +
            "AND l.startDate <= :end AND l.endDate >= :start")
     List<LeaveRequest> findApprovedOverlappingForTeam(@Param("team") String teamName, 
                                                       @Param("start") LocalDate start, 
                                                       @Param("end") LocalDate end);
 
-    // Matches the HQL requirement for Test Priority 65
+    // Required for HQL OnDate test
     @Query("SELECT l FROM LeaveRequest l WHERE l.status = 'APPROVED' AND :date BETWEEN l.startDate AND l.endDate")
     List<LeaveRequest> findApprovedOnDate(@Param("date") LocalDate date);
 }
