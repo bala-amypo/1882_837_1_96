@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthServiceImpl implements AuthService {
     private final UserAccountRepository userRepo;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder encoder;
     private final JwtTokenProvider tokenProvider;
 
-    public AuthServiceImpl(UserAccountRepository userRepo, BCryptPasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
+    public AuthServiceImpl(UserAccountRepository userRepo, BCryptPasswordEncoder encoder, JwtTokenProvider tokenProvider) {
         this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
+        this.encoder = encoder;
         this.tokenProvider = tokenProvider;
     }
 
@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
         UserAccount user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!encoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadRequestException("Invalid credentials");
         }
 
