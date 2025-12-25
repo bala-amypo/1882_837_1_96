@@ -7,9 +7,6 @@ import org.testng.ITestResult;
 public class TestResultListener implements ITestListener {
 
     @Override
-    public void onTestStart(ITestResult result) {}
-
-    @Override
     public void onTestSuccess(ITestResult result) {}
 
     @Override

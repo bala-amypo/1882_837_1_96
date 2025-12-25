@@ -10,5 +10,7 @@ public class LeaveOverlapTeamCapacityAnalyzerTest {
 
     @Test
     public void contextLoads() {
+        // simple test to verify context
+        assert true;
     }
 }
