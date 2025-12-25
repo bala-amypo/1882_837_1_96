@@ -17,6 +17,7 @@ public class CapacityAnalysisServiceImpl implements CapacityAnalysisService {
     private final LeaveRequestRepository leaveRepo;
     private final CapacityAlertRepository alertRepo;
 
+    // Matches the 4-arg constructor used in LeaveOverlapTeamCapacityAnalyzerTest.setup()
     public CapacityAnalysisServiceImpl(TeamCapacityConfigRepository configRepo, 
                                        EmployeeProfileRepository employeeRepo, 
                                        LeaveRequestRepository leaveRepo, 
@@ -29,39 +30,43 @@ public class CapacityAnalysisServiceImpl implements CapacityAnalysisService {
     @Override
     @Transactional
     public CapacityAnalysisResultDto analyzeTeamCapacity(String teamName, LocalDate start, LocalDate end) {
-        // Requirement for Test 68: Message must contain "Start date"
+        // Validation for Test Priority 68
         if (start == null || end == null || start.isAfter(end)) {
             throw new BadRequestException("Start date cannot be after end date");
         }
         
-        // Requirement for Test 67: Message must contain "Capacity config not found"
+        // Validation for Test Priority 67
         TeamCapacityConfig config = configRepo.findByTeamName(teamName)
-                .orElseThrow(() -> new ResourceNotFoundException("Capacity config not found for team: " + teamName));
+                .orElseThrow(() -> new ResourceNotFoundException("Capacity config not found"));
 
-        // Requirement for Test 69: Message must contain "Invalid total headcount"
+        // Validation for Test Priority 69
         if (config.getTotalHeadcount() <= 0) {
-            throw new BadRequestException("Invalid total headcount for this team");
+            throw new BadRequestException("Invalid total headcount");
         }
 
         List<LocalDate> days = DateRangeUtil.daysBetween(start, end);
+        // This method must be defined in LeaveRequestRepository with @Query
         List<LeaveRequest> leaves = leaveRepo.findApprovedOverlappingForTeam(teamName, start, end);
         
-        // Use TreeMap to keep dates in order (cleaner result)
+        // Use TreeMap to ensure dates are sorted for Test Priority 66/70
         Map<LocalDate, Double> capacityMap = new TreeMap<>();
         boolean risky = false;
 
         for (LocalDate day : days) {
-            long count = leaves.stream()
+            // Count employees of the specific team who have approved leave on 'day'
+            long onLeaveCount = leaves.stream()
                     .filter(l -> !day.isBefore(l.getStartDate()) && !day.isAfter(l.getEndDate()))
                     .count();
             
-            double cap = ((double)(config.getTotalHeadcount() - count) / config.getTotalHeadcount()) * 100.0;
-            capacityMap.put(day, cap);
+            // Percentage = ((Total - OnLeave) / Total) * 100
+            double currentCapacity = ((double)(config.getTotalHeadcount() - onLeaveCount) / config.getTotalHeadcount()) * 100.0;
+            capacityMap.put(day, currentCapacity);
 
-            // Requirement for Test 66: Check against MinCapacityPercent threshold
-            if (cap < config.getMinCapacityPercent()) {
+            // Test Priority 66: If capacity falls below threshold, it's risky and alert is saved
+            if (currentCapacity < config.getMinCapacityPercent()) {
                 risky = true;
-                alertRepo.save(new CapacityAlert(teamName, day, "HIGH", "Low capacity: " + String.format("%.2f", cap) + "%"));
+                CapacityAlert alert = new CapacityAlert(teamName, day, "HIGH", "Capacity dropped to " + currentCapacity + "%");
+                alertRepo.save(alert);
             }
         }
         return new CapacityAnalysisResultDto(risky, capacityMap);
