@@ -7,32 +7,20 @@ import org.testng.ITestResult;
 public class TestResultListener implements ITestListener {
 
     @Override
-    public void onTestStart(ITestResult result) {
-        // Optional: before test starts
-    }
+    public void onTestStart(ITestResult result) {}
 
     @Override
-    public void onTestSuccess(ITestResult result) {
-        // Optional: on test success
-    }
+    public void onTestSuccess(ITestResult result) {}
 
     @Override
-    public void onTestFailure(ITestResult result) {
-        // Optional: on test failure
-    }
+    public void onTestFailure(ITestResult result) {}
 
     @Override
-    public void onTestSkipped(ITestResult result) {
-        // Optional: when test is skipped
-    }
+    public void onTestSkipped(ITestResult result) {}
 
     @Override
-    public void onStart(ITestContext context) {
-        // Optional: before all tests
-    }
+    public void onStart(ITestContext context) {}
 
     @Override
-    public void onFinish(ITestContext context) {
-        // Optional: after all tests
-    }
+    public void onFinish(ITestContext context) {}
 }
