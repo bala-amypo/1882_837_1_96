@@ -8,8 +8,8 @@ import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    private final String jwtSecret = "base64EncodedSecretKeyForDemoPurposeOnly12345678901234567890";
-    private final long jwtExpirationInMs = 3600000;
+    private String jwtSecret = "base64EncodedSecretKeyForDemoPurposeOnly12345678901234567890";
+    private long jwtExpirationInMs = 3600000;
 
     public String generateToken(UserAccount user) {
         return Jwts.builder()
@@ -36,15 +36,13 @@ public class JwtTokenProvider {
                 .getBody().getSubject();
     }
 
-    // Required by tests: getUserId returns Long
     public Long getUserId(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody();
         return Long.valueOf(claims.get("userId").toString());
     }
 
-    // Required by tests: getRole returns String
     public String getRole(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody();
-        return claims.get("role").toString();
+        return (String) claims.get("role");
     }
 }

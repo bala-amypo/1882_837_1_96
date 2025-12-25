@@ -14,7 +14,6 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
            "AND l.status = 'APPROVED' AND l.startDate <= :end AND l.endDate >= :start")
     List<LeaveRequest> findApprovedOverlappingForTeam(String teamName, LocalDate start, LocalDate end);
 
-    // Required by tests: findApprovedOnDate
     @Query("SELECT l FROM LeaveRequest l WHERE l.status = 'APPROVED' AND :date BETWEEN l.startDate AND l.endDate")
     List<LeaveRequest> findApprovedOnDate(LocalDate date);
 }

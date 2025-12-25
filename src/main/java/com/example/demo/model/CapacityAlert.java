@@ -15,7 +15,7 @@ public class CapacityAlert {
 
     public CapacityAlert() {}
 
-    // Required by tests: Parameterized constructor
+    // REQUIRED CONSTRUCTOR
     public CapacityAlert(String teamName, LocalDate date, String severity, String message) {
         this.teamName = teamName;
         this.date = date;

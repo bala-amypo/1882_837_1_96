@@ -1,4 +1,4 @@
-package com.example.demo.service.serviceimpl;
+package com.example.demo.service.impl;
 
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
@@ -12,26 +12,29 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-    private final UserAccountRepository userRepo;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtTokenProvider tokenProvider;
 
-    public AuthServiceImpl(UserAccountRepository userRepo, BCryptPasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
-        this.userRepo = userRepo;
+    private final UserAccountRepository userAccountRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public AuthServiceImpl(UserAccountRepository userAccountRepository, 
+                           BCryptPasswordEncoder passwordEncoder, 
+                           JwtTokenProvider jwtTokenProvider) {
+        this.userAccountRepository = userAccountRepository;
         this.passwordEncoder = passwordEncoder;
-        this.tokenProvider = tokenProvider;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
     public AuthResponse authenticate(AuthRequest request) {
-        UserAccount user = userRepo.findByEmail(request.getEmail())
+        UserAccount user = userAccountRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadRequestException("Invalid credentials");
         }
 
-        String token = tokenProvider.generateToken(user);
+        String token = jwtTokenProvider.generateToken(user);
         return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole());
     }
 }
