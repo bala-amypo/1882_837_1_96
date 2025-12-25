@@ -10,7 +10,8 @@ public class LeaveRequestDto {
     private String status;
     private String reason;
 
-    // Standard constructor used by your mapToDto method
+    public LeaveRequestDto() {}
+
     public LeaveRequestDto(Long id, Long employeeId, LocalDate startDate, LocalDate endDate, String type, String status, String reason) {
         this.id = id;
         this.employeeId = employeeId;
@@ -20,9 +21,8 @@ public class LeaveRequestDto {
         this.status = status;
         this.reason = reason;
     }
-    
-    public LeaveRequestDto() {} // Default constructor
-    // Getters and Setters ...
+
+    // Getters and Setters...
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Long getEmployeeId() { return employeeId; }

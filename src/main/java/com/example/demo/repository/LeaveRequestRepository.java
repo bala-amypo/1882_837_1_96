@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long> {
-    
     List<LeaveRequest> findByEmployee(EmployeeProfile employee);
 
     @Query("SELECT l FROM LeaveRequest l WHERE l.status = 'APPROVED' AND l.employee.teamName = :teamName " +

@@ -6,7 +6,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.2</version>
-        <relativePath/> 
     </parent>
     <groupId>com.example</groupId>
     <artifactId>demo</artifactId>
@@ -17,7 +16,6 @@
     </properties>
 
     <dependencies>
-        <!-- Standard Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -31,14 +29,14 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Swagger/OpenAPI support -->
+        <!-- SpringDoc OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.2.0</version>
         </dependency>
 
-        <!-- JWT for Security -->
+        <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -57,14 +55,13 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Database for persistence -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- TESTING (Crucial for 70/70) -->
+        <!-- Testing (Resolves line 16 of your Test file) -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -81,7 +78,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <!-- Exclude JUnit to prevent Maven from getting confused -->
             <exclusions>
                 <exclusion>
                     <groupId>org.junit.jupiter</groupId>
@@ -98,14 +94,13 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <!-- This forces Maven to run TestNG instead of JUnit -->
+                    <!-- Forces TestNG execution -->
                     <properties>
                         <property>
                             <name>testnames</name>
                             <value>LeaveOverlapTeamCapacityAnalyzerTest</value>
                         </property>
                     </properties>
-                    <threadCount>1</threadCount>
                 </configuration>
             </plugin>
         </plugins>
