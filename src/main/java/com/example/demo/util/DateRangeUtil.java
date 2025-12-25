@@ -7,6 +7,9 @@ import java.util.List;
 public class DateRangeUtil {
     public static List<LocalDate> daysBetween(LocalDate start, LocalDate end) {
         List<LocalDate> dates = new ArrayList<>();
+        if (start == null || end == null || start.isAfter(end)) {
+            return dates;
+        }
         LocalDate current = start;
         while (!current.isAfter(end)) {
             dates.add(current);

@@ -28,39 +28,46 @@ public class CapacityAnalysisServiceImpl implements CapacityAnalysisService {
 
     @Override
     public CapacityAnalysisResultDto analyzeTeamCapacity(String teamName, LocalDate start, LocalDate end) {
-        if (start.isAfter(end)) {
-            throw new BadRequestException("Start date cannot be after end date");
+        // Requirement 6.5: Validation message "Start date or future"
+        if (start == null || end == null || start.isAfter(end)) {
+            throw new BadRequestException("Invalid date range: Start date or future");
         }
 
+        // Requirement 6.5: Message "Capacity config not found"
         TeamCapacityConfig config = configRepo.findByTeamName(teamName)
                 .orElseThrow(() -> new ResourceNotFoundException("Capacity config not found"));
 
-        if (config.getTotalHeadcount() <= 0) {
+        // Requirement 6.5: Message "Invalid total headcount"
+        if (config.getTotalHeadcount() == null || config.getTotalHeadcount() <= 0) {
             throw new BadRequestException("Invalid total headcount");
         }
 
         List<LocalDate> days = DateRangeUtil.daysBetween(start, end);
-        List<LeaveRequest> leaves = leaveRepo.findApprovedOverlappingForTeam(teamName, start, end);
+        List<LeaveRequest> approvedLeaves = leaveRepo.findApprovedOverlappingForTeam(teamName, start, end);
         
-        Map<LocalDate, Double> capacityByDate = new HashMap<>();
-        boolean isRisky = false;
+        Map<LocalDate, Double> capacityMap = new HashMap<>();
+        boolean risky = false;
 
         for (LocalDate day : days) {
-            long onLeave = leaves.stream()
-                    .filter(l -> !day.isBefore(l.getStartDate()) && !day.isAfter(l.getEndDate()))
-                    .count();
+            long countOnLeave = approvedLeaves.stream()
+                .filter(l -> !day.isBefore(l.getStartDate()) && !day.isAfter(l.getEndDate()))
+                .count();
 
-            double currentCapacity = ((double) (config.getTotalHeadcount() - onLeave) / config.getTotalHeadcount()) * 100;
-            capacityByDate.put(day, currentCapacity);
+            double capacity = ((double) (config.getTotalHeadcount() - countOnLeave) / config.getTotalHeadcount()) * 100.0;
+            capacityMap.put(day, capacity);
 
-            if (currentCapacity < config.getMinCapacityPercent()) {
-                isRisky = true;
-                CapacityAlert alert = new CapacityAlert(null, teamName, day, "HIGH", 
-                    "Capacity dropped to " + currentCapacity + "%");
+            if (capacity < config.getMinCapacityPercent()) {
+                risky = true;
+                // Create alert record
+                CapacityAlert alert = new CapacityAlert();
+                alert.setTeamName(teamName);
+                alert.setDate(day);
+                alert.setSeverity(capacity < (config.getMinCapacityPercent() / 2) ? "HIGH" : "MEDIUM");
+                alert.setMessage("Capacity low: " + capacity + "%");
                 alertRepo.save(alert);
             }
         }
 
-        return new CapacityAnalysisResultDto(isRisky, capacityByDate);
+        return new CapacityAnalysisResultDto(risky, capacityMap);
     }
 }
