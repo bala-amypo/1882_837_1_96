@@ -9,8 +9,7 @@ import org.testng.annotations.Test;
 public class LeaveOverlapTeamCapacityAnalyzerTest {
 
     @Test
-    public void contextLoads() {
-        // simple test to verify context
-        assert true;
+    public void dummyTest() {
+        System.out.println("TestNG test running");
     }
 }
