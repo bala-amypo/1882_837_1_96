@@ -10,8 +10,10 @@ public class EmployeeProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String employeeId;
     private String fullName;
+    @Column(unique = true, nullable = false)
     private String email;
     private String teamName;
     private String role;
@@ -22,6 +24,13 @@ public class EmployeeProfile {
     private Set<EmployeeProfile> colleagues = new HashSet<>();
 
     public EmployeeProfile() {}
+
+    // Required by tests
+    public Boolean isActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
+
+    public Set<EmployeeProfile> getColleagues() { return colleagues; }
+    public void setColleagues(Set<EmployeeProfile> colleagues) { this.colleagues = colleagues; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -35,11 +44,4 @@ public class EmployeeProfile {
     public void setTeamName(String teamName) { this.teamName = teamName; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
-
-    // CRITICAL: Test expects isActive() for boolean
-    public Boolean isActive() { return active; }
-    public void setActive(Boolean active) { this.active = active; }
-
-    public Set<EmployeeProfile> getColleagues() { return colleagues; }
-    public void setColleagues(Set<EmployeeProfile> colleagues) { this.colleagues = colleagues; }
 }

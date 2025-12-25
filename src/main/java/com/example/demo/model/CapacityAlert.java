@@ -15,7 +15,7 @@ public class CapacityAlert {
 
     public CapacityAlert() {}
 
-    // REQUIRED CONSTRUCTOR
+    // Required 4-arg constructor
     public CapacityAlert(String teamName, LocalDate date, String severity, String message) {
         this.teamName = teamName;
         this.date = date;
