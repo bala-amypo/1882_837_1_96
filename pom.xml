@@ -6,7 +6,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.2</version>
-        <relativePath/> 
     </parent>
     <groupId>com.example</groupId>
     <artifactId>demo</artifactId>
@@ -17,7 +16,6 @@
     </properties>
 
     <dependencies>
-        <!-- Standard Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -31,14 +29,14 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- SpringDoc OpenAPI (Fixes io.swagger compilation errors) -->
+        <!-- Swagger (Fixes io.swagger compilation error) -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.2.0</version>
         </dependency>
 
-        <!-- JWT Support -->
+        <!-- JWT for Security tests -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -63,7 +61,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- TESTING Frameworks -->
+        <!-- Testing (Fixes missing context package and provides TestNG) -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -76,7 +74,6 @@
             <version>5.3.1</version>
             <scope>test</scope>
         </dependency>
-        <!-- Fixes Compilation Error for org.springframework.boot.test.context -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -97,7 +94,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <!-- Force Surefire to use TestNG instead of JUnit -->
+                    <!-- Forces Maven to run TestNG provider -->
                     <properties>
                         <property>
                             <name>testnames</name>
