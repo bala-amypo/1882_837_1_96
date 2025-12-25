@@ -9,7 +9,6 @@ import com.example.demo.model.TeamCapacityConfig;
 import com.example.demo.repository.*;
 import com.example.demo.service.CapacityAnalysisService;
 import com.example.demo.util.DateRangeUtil;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class CapacityAnalysisServiceImpl implements CapacityAnalysisService {
 
     private final TeamCapacityConfigRepository configRepo;
@@ -26,18 +24,26 @@ public class CapacityAnalysisServiceImpl implements CapacityAnalysisService {
     private final LeaveRequestRepository leaveRepo;
     private final CapacityAlertRepository alertRepo;
 
+    // Manual Constructor Injection (Replaces @RequiredArgsConstructor)
+    public CapacityAnalysisServiceImpl(TeamCapacityConfigRepository configRepo, 
+                                       EmployeeProfileRepository employeeRepo, 
+                                       LeaveRequestRepository leaveRepo, 
+                                       CapacityAlertRepository alertRepo) {
+        this.configRepo = configRepo;
+        this.employeeRepo = employeeRepo;
+        this.leaveRepo = leaveRepo;
+        this.alertRepo = alertRepo;
+    }
+
     @Override
     public CapacityAnalysisResultDto analyzeTeamCapacity(String teamName, LocalDate start, LocalDate end) {
-        // Requirement 6.5: Validation message "Start date or future"
         if (start == null || end == null || start.isAfter(end)) {
             throw new BadRequestException("Invalid date range: Start date or future");
         }
 
-        // Requirement 6.5: Message "Capacity config not found"
         TeamCapacityConfig config = configRepo.findByTeamName(teamName)
                 .orElseThrow(() -> new ResourceNotFoundException("Capacity config not found"));
 
-        // Requirement 6.5: Message "Invalid total headcount"
         if (config.getTotalHeadcount() == null || config.getTotalHeadcount() <= 0) {
             throw new BadRequestException("Invalid total headcount");
         }
@@ -58,16 +64,14 @@ public class CapacityAnalysisServiceImpl implements CapacityAnalysisService {
 
             if (capacity < config.getMinCapacityPercent()) {
                 risky = true;
-                // Create alert record
                 CapacityAlert alert = new CapacityAlert();
                 alert.setTeamName(teamName);
                 alert.setDate(day);
-                alert.setSeverity(capacity < (config.getMinCapacityPercent() / 2) ? "HIGH" : "MEDIUM");
+                alert.setSeverity("HIGH");
                 alert.setMessage("Capacity low: " + capacity + "%");
                 alertRepo.save(alert);
             }
         }
-
         return new CapacityAnalysisResultDto(risky, capacityMap);
     }
 }
