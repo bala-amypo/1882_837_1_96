@@ -10,6 +10,5 @@ public class LeaveOverlapTeamCapacityAnalyzerTest {
 
     @Test
     public void contextLoads() {
-        // required by auto-grader
     }
 }
