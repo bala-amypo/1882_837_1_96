@@ -30,7 +30,6 @@ public class EmployeeProfile {
 
     public EmployeeProfile() {}
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmployeeId() { return employeeId; }
@@ -45,10 +44,9 @@ public class EmployeeProfile {
     public void setRole(String role) { this.role = role; }
     public void setActive(Boolean active) { this.active = active; }
 
-    // Required by tests: isActive()
+    // Test requires this naming specifically
     public Boolean isActive() { return active; }
     
-    // Required by tests: getColleagues()
     public Set<EmployeeProfile> getColleagues() { return colleagues; }
     public void setColleagues(Set<EmployeeProfile> colleagues) { this.colleagues = colleagues; }
 }
