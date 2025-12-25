@@ -10,21 +10,31 @@ public class EmployeeProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     @Column(unique = true, nullable = false)
     private String employeeId;
+    
     private String fullName;
+    
     @Column(unique = true, nullable = false)
     private String email;
+    
     private String teamName;
     private String role;
     private Boolean active = true;
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToMany
+    @JoinTable(
+        name = "employee_colleagues",
+        joinColumns = @JoinColumn(name = "employee_id"),
+        inverseJoinColumns = @JoinColumn(name = "colleague_id")
+    )
     private Set<EmployeeProfile> colleagues = new HashSet<>();
 
     public EmployeeProfile() {}
 
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmployeeId() { return employeeId; }
@@ -37,6 +47,12 @@ public class EmployeeProfile {
     public void setTeamName(String teamName) { this.teamName = teamName; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
-    public Boolean getActive() { return active; }
+    
+    // Required by tests: isActive()
+    public Boolean isActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
+    
+    // Required by tests: getColleagues()
+    public Set<EmployeeProfile> getColleagues() { return colleagues; }
+    public void setColleagues(Set<EmployeeProfile> colleagues) { this.colleagues = colleagues; }
 }

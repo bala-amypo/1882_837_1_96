@@ -15,6 +15,14 @@ public class CapacityAlert {
 
     public CapacityAlert() {}
 
+    // Required by tests: Parameterized constructor
+    public CapacityAlert(String teamName, LocalDate date, String severity, String message) {
+        this.teamName = teamName;
+        this.date = date;
+        this.severity = severity;
+        this.message = message;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTeamName() { return teamName; }

@@ -4,7 +4,6 @@ import com.example.demo.model.UserAccount;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-import java.security.Key;
 import java.util.Date;
 
 @Component
@@ -35,5 +34,17 @@ public class JwtTokenProvider {
     public String getEmail(String token) {
         return Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token)
                 .getBody().getSubject();
+    }
+
+    // Required by tests: getUserId returns Long
+    public Long getUserId(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody();
+        return Long.valueOf(claims.get("userId").toString());
+    }
+
+    // Required by tests: getRole returns String
+    public String getRole(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody();
+        return claims.get("role").toString();
     }
 }
