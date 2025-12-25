@@ -6,9 +6,11 @@ import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.CapacityAnalysisService;
 import com.example.demo.util.DateRangeUtil;
+import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 
+@Service
 public class CapacityAnalysisServiceImpl implements CapacityAnalysisService {
     private final TeamCapacityConfigRepository configRepo;
     private final LeaveRequestRepository leaveRepo;
