@@ -6,6 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.2</version>
+        <relativePath/> 
     </parent>
     <groupId>com.example</groupId>
     <artifactId>demo</artifactId>
@@ -16,6 +17,7 @@
     </properties>
 
     <dependencies>
+        <!-- Standard Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -29,14 +31,14 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Swagger (Fixes io.swagger compilation error) -->
+        <!-- SpringDoc OpenAPI (Fixes your io.swagger compilation errors) -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.2.0</version>
         </dependency>
 
-        <!-- JWT for Security tests -->
+        <!-- JWT Support -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -61,7 +63,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Testing (Fixes missing context package and provides TestNG) -->
+        <!-- Testing (CRITICAL: Fixes line 16 import error and enables TestNG) -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -94,7 +96,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <!-- Forces Maven to run TestNG provider -->
+                    <!-- FORCES Maven to use TestNG instead of JUnit -->
                     <properties>
                         <property>
                             <name>testnames</name>
