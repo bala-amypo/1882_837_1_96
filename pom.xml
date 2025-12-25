@@ -31,14 +31,14 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- SpringDoc OpenAPI (Fixes your io.swagger compilation errors) -->
+        <!-- Swagger (Fixes io.swagger compilation error) -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.2.0</version>
         </dependency>
 
-        <!-- JWT Support -->
+        <!-- JWT for Security tests -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -63,7 +63,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Testing (CRITICAL: Fixes line 16 import error and enables TestNG) -->
+        <!-- TESTING Frameworks (Fixes line 16 import error and enables TestNG) -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -96,7 +96,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <!-- FORCES Maven to use TestNG instead of JUnit -->
+                    <!-- FORCES Maven to run TestNG instead of JUnit -->
                     <properties>
                         <property>
                             <name>testnames</name>
