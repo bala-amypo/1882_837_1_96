@@ -1,16 +1,26 @@
-package com.example.demo.service.serviceimpl; // Must match the folder name exactly
+package com.example.demo.service.serviceimpl;
 
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
-// ... (rest of imports)
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.model.UserAccount;
+import com.example.demo.repository.UserAccountRepository;
+import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.service.AuthService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+
     private final UserAccountRepository userRepo;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
 
-    public AuthServiceImpl(UserAccountRepository userRepo, BCryptPasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
+    // Manual constructor for dependency injection
+    public AuthServiceImpl(UserAccountRepository userRepo, 
+                           BCryptPasswordEncoder passwordEncoder, 
+                           JwtTokenProvider tokenProvider) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
@@ -18,14 +28,24 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse authenticate(AuthRequest request) {
+        // Find user by email
         UserAccount user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new com.example.demo.exception.BadRequestException("User not found"));
+                .orElseThrow(() -> new BadRequestException("User not found"));
 
+        // Validate password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new com.example.demo.exception.BadRequestException("Invalid credentials");
+            throw new BadRequestException("Invalid credentials");
         }
 
+        // Generate JWT Token
         String token = tokenProvider.generateToken(user);
-        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole());
+
+        // Return AuthResponse using the constructor we added to the DTO
+        return new AuthResponse(
+            token, 
+            user.getId(), 
+            user.getEmail(), 
+            user.getRole()
+        );
     }
 }
