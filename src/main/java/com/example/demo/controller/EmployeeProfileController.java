@@ -2,25 +2,22 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.EmployeeProfileDto;
 import com.example.demo.service.EmployeeProfileService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
-@RequiredArgsConstructor
 public class EmployeeProfileController {
     private final EmployeeProfileService service;
+
+    public EmployeeProfileController(EmployeeProfileService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<EmployeeProfileDto> create(@RequestBody EmployeeProfileDto dto) {
         return ResponseEntity.ok(service.create(dto));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<EmployeeProfileDto> update(@PathVariable Long id, @RequestBody EmployeeProfileDto dto) {
-        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @GetMapping("/{id}")
@@ -31,10 +28,5 @@ public class EmployeeProfileController {
     @GetMapping("/team/{teamName}")
     public ResponseEntity<List<EmployeeProfileDto>> getByTeam(@PathVariable String teamName) {
         return ResponseEntity.ok(service.getByTeam(teamName));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<EmployeeProfileDto>> getAll() {
-        return ResponseEntity.ok(service.getAll());
     }
 }

@@ -5,13 +5,15 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.TeamCapacityConfig;
 import com.example.demo.repository.TeamCapacityConfigRepository;
 import com.example.demo.service.TeamCapacityRuleService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class TeamCapacityRuleServiceImpl implements TeamCapacityRuleService {
     private final TeamCapacityConfigRepository repo;
+
+    public TeamCapacityRuleServiceImpl(TeamCapacityConfigRepository repo) {
+        this.repo = repo;
+    }
 
     @Override
     public TeamCapacityConfig createRule(TeamCapacityConfig rule) {
@@ -21,7 +23,8 @@ public class TeamCapacityRuleServiceImpl implements TeamCapacityRuleService {
 
     @Override
     public TeamCapacityConfig updateRule(Long id, TeamCapacityConfig updatedRule) {
-        TeamCapacityConfig existing = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
+        TeamCapacityConfig existing = repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
         validate(updatedRule);
         existing.setTotalHeadcount(updatedRule.getTotalHeadcount());
         existing.setMinCapacityPercent(updatedRule.getMinCapacityPercent());
@@ -30,7 +33,8 @@ public class TeamCapacityRuleServiceImpl implements TeamCapacityRuleService {
 
     @Override
     public TeamCapacityConfig getRuleByTeam(String teamName) {
-        return repo.findByTeamName(teamName).orElseThrow(() -> new ResourceNotFoundException("Capacity config not found"));
+        return repo.findByTeamName(teamName)
+                .orElseThrow(() -> new ResourceNotFoundException("Capacity config not found"));
     }
 
     private void validate(TeamCapacityConfig rule) {
