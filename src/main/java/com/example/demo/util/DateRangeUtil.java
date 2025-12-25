@@ -6,15 +6,11 @@ import java.util.List;
 
 public class DateRangeUtil {
     public static List<LocalDate> daysBetween(LocalDate start, LocalDate end) {
-        List<LocalDate> dates = new ArrayList<>();
-        if (start == null || end == null || start.isAfter(end)) {
-            return dates;
+        List<LocalDate> totalDates = new ArrayList<>();
+        while (!start.isAfter(end)) {
+            totalDates.add(start);
+            start = start.plusDays(1);
         }
-        LocalDate current = start;
-        while (!current.isAfter(end)) {
-            dates.add(current);
-            current = current.plusDays(1);
-        }
-        return dates;
+        return totalDates;
     }
 }
