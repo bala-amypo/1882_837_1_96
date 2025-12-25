@@ -6,6 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.2</version>
+        <relativePath/> 
     </parent>
     <groupId>com.example</groupId>
     <artifactId>demo</artifactId>
@@ -16,6 +17,7 @@
     </properties>
 
     <dependencies>
+        <!-- Standard Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -29,7 +31,7 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Fixes Swagger/OpenAPI compilation errors -->
+        <!-- Swagger (Fixes io.swagger compilation errors) -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -61,7 +63,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Testing Frameworks -->
+        <!-- TESTING Frameworks -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -74,10 +76,17 @@
             <version>5.3.1</version>
             <scope>test</scope>
         </dependency>
+        <!-- Fixes Compilation Error for org.springframework.boot.test.context -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -88,7 +97,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <!-- Forces Maven to use TestNG provider -->
+                    <!-- Forces Surefire to use TestNG instead of JUnit -->
                     <properties>
                         <property>
                             <name>testnames</name>
