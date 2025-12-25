@@ -10,7 +10,6 @@ public class CapacityAnalysisResultDto {
         this.risky = risky;
         this.capacityByDate = capacityByDate;
     }
-
     public boolean isRisky() { return risky; }
     public Map<LocalDate, Double> getCapacityByDate() { return capacityByDate; }
 }
