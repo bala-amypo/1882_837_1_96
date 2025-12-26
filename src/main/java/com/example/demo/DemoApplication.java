@@ -8,6 +8,6 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 @ServletComponentScan // This is required for your SimpleHelloServlet to work
 public class DemoApplication {
     public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
-    }
-}
+            SpringApplication.run(DemoApplication.class, args);
+                }
+                }
