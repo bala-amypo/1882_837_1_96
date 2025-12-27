@@ -1,17 +1,5 @@
-package com.example.demo.config;
-
-import com.example.demo.security.CustomUserDetailsService;
-import com.example.demo.security.JwtAuthenticationFilter;
-import com.example.demo.security.JwtTokenProvider;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 @Configuration
+@EnableMethodSecurity // 1. Enable this to use @PreAuthorize in the controller
 public class SecurityConfig {
 
     private final JwtTokenProvider tokenProvider;
@@ -34,8 +22,12 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/api/**").authenticated()
-                .anyRequest().permitAll()
+                
+                // 2. Define Role-based access here or via annotations in controller
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/employees").hasRole("ADMIN")
+                .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
+                
+                .anyRequest().authenticated()
             );
 
         http.addFilterBefore(new JwtAuthenticationFilter(tokenProvider, userDetailsService), 

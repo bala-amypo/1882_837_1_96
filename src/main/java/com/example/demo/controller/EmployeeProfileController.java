@@ -1,11 +1,3 @@
-package com.example.demo.controller;
-
-import com.example.demo.dto.EmployeeProfileDto;
-import com.example.demo.service.EmployeeProfileService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeProfileController {
@@ -15,17 +7,23 @@ public class EmployeeProfileController {
         this.service = service;
     }
 
+    // ONLY ADMIN can create employees
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')") 
     public ResponseEntity<EmployeeProfileDto> create(@RequestBody EmployeeProfileDto dto) {
         return ResponseEntity.ok(service.create(dto));
     }
 
+    // BOTH ADMIN and USER can view by ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<EmployeeProfileDto> get(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
+    // BOTH ADMIN and USER can view by Team
     @GetMapping("/team/{teamName}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<EmployeeProfileDto>> getByTeam(@PathVariable String teamName) {
         return ResponseEntity.ok(service.getByTeam(teamName));
     }
