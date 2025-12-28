@@ -5,7 +5,7 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.EmployeeProfile;
 import com.example.demo.repository.EmployeeProfileRepository;
 import com.example.demo.service.EmployeeProfileService;
-import org.springframework.security.crypto.password.PasswordEncoder; // Add this
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class EmployeeProfileServiceImpl implements EmployeeProfileService {
     private final EmployeeProfileRepository repo;
-    private final PasswordEncoder passwordEncoder; // Add this for login support
+    private final PasswordEncoder passwordEncoder;
 
     public EmployeeProfileServiceImpl(EmployeeProfileRepository repo, PasswordEncoder passwordEncoder) {
         this.repo = repo;
@@ -24,76 +24,64 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
     @Override
     @Transactional
     public EmployeeProfileDto create(EmployeeProfileDto dto) {
-        // 1. Check if email already exists to avoid 500 error
+        // Fix for 500 error: Prevent duplicate email crashes
         if (repo.existsByEmail(dto.getEmail().trim())) {
-            throw new RuntimeException("Email already exists: " + dto.getEmail());
+            throw new RuntimeException("Email already exists");
         }
 
         EmployeeProfile entity = new EmployeeProfile();
-        
-        // 2. Use .trim() on all strings to fix the " ADMIN" space issue
         entity.setEmployeeId(dto.getEmployeeId().trim());
         entity.setFullName(dto.getFullName().trim());
-        entity.setEmail(dto.getEmail().trim().toLowerCase());
+        entity.setEmail(dto.getEmail().trim());
         entity.setTeamName(dto.getTeamName().trim());
-        entity.setRole(dto.getRole().trim()); // This removes the space from " ADMIN"
         
-        // 3. CRITICAL: Set a password so you can actually LOGIN later
-        // If the DTO doesn't have a password, we set a default one ("admin")
+        // Fix for " ADMIN" space issue
+        entity.setRole(dto.getRole().trim()); 
+        
+        // Set default password to "admin" so login works
         entity.setPassword(passwordEncoder.encode("admin")); 
-        
         entity.setActive(true);
-        
+
         EmployeeProfile saved = repo.save(entity);
         return mapToDto(saved);
     }
 
     @Override
     public EmployeeProfileDto getById(Long id) {
-        return repo.findById(id)
-                .map(this::mapToDto)
+        return repo.findById(id).map(this::mapToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
     }
 
     @Override
     public List<EmployeeProfileDto> getByTeam(String teamName) {
-        return repo.findByTeamNameAndActiveTrue(teamName)
-                .stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+        return repo.findByTeamNameAndActiveTrue(teamName).stream()
+                .map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Override
     public List<EmployeeProfileDto> getAll() {
-        return repo.findAll().stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+        return repo.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public EmployeeProfileDto update(Long id, EmployeeProfileDto dto) {
-        EmployeeProfile entity = repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
-        
-        entity.setFullName(dto.getFullName().trim());
-        entity.setTeamName(dto.getTeamName().trim());
-        entity.setRole(dto.getRole().trim());
-        
-        return mapToDto(repo.save(entity));
+        EmployeeProfile e = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found"));
+        e.setFullName(dto.getFullName().trim());
+        e.setTeamName(dto.getTeamName().trim());
+        e.setRole(dto.getRole().trim());
+        return mapToDto(repo.save(e));
     }
 
     @Override
     @Transactional
     public void deactivate(Long id) {
-        EmployeeProfile entity = repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
-        entity.setActive(false);
-        repo.save(entity);
+        EmployeeProfile e = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found"));
+        e.setActive(false);
+        repo.save(e);
     }
 
     private EmployeeProfileDto mapToDto(EmployeeProfile e) {
-        // Ensure your DTO constructor matches these fields
         return new EmployeeProfileDto(
             e.getId(), 
             e.getEmployeeId(), 
