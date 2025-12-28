@@ -24,8 +24,8 @@ public class OpenApiConfig {
                         .title("Leave Management API")
                         .version("1.0")
                         .description("API for Employee Leaves and Team Capacity Management"))
-                // Adds the "Authorize" button and padlock icons
-                .addSecurityRequirement(new SecurityRequirement().addList(securitySchemeName))
+                // FIXED: Changed addSecurityRequirement to addSecurityItem
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName, new SecurityScheme()
                                 .name(securitySchemeName)
