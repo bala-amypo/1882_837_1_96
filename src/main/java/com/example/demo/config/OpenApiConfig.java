@@ -17,14 +17,8 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
-                .servers(List.of(
-                        new Server().url("https://9209.408procr.amypo.ai/")
-                ))
-                .info(new Info()
-                        .title("Leave Management API")
-                        .version("1.0")
-                        .description("API for Employee Leaves and Team Capacity Management"))
-                // FIXED: Changed addSecurityRequirement to addSecurityItem
+                .servers(List.of(new Server().url("https://9209.408procr.amypo.ai/")))
+                .info(new Info().title("Leave Management API").version("1.0"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName, new SecurityScheme()

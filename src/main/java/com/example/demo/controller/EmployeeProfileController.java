@@ -17,7 +17,7 @@ public class EmployeeProfileController {
     }
 
     @PostMapping
-    // REMOVED @PreAuthorize TEMPORARILY so you can create the first Admin
+    // REMOVED @PreAuthorize TEMPORARILY so you can create the first user
     public ResponseEntity<EmployeeProfileDto> create(@RequestBody EmployeeProfileDto dto) {
         return ResponseEntity.ok(service.create(dto));
     }
