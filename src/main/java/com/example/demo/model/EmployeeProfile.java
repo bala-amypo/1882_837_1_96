@@ -10,19 +10,15 @@ public class EmployeeProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     @Column(unique = true, nullable = false)
     private String employeeId;
-    
     private String fullName;
-    
     @Column(unique = true, nullable = false)
     private String email;
-    
     private String teamName;
     private String role;
     
-    // ADD THIS: Required for the /auth/login to work
+    // REQUIRED FOR LOGIN
     private String password; 
     
     private Boolean active = true;
@@ -38,6 +34,10 @@ public class EmployeeProfile {
 
     public EmployeeProfile() {}
 
+    // Getters and Setters...
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmployeeId() { return employeeId; }
@@ -50,14 +50,8 @@ public class EmployeeProfile {
     public void setTeamName(String teamName) { this.teamName = teamName; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
-    
-    // ADD THIS SETTER
-    public void setPassword(String password) { this.password = password; }
-    public String getPassword() { return password; }
-
     public void setActive(Boolean active) { this.active = active; }
     public Boolean isActive() { return active; }
-    
     public Set<EmployeeProfile> getColleagues() { return colleagues; }
     public void setColleagues(Set<EmployeeProfile> colleagues) { this.colleagues = colleagues; }
 }
