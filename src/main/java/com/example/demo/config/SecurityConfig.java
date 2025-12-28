@@ -45,13 +45,23 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Allow Swagger and Login
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                // 1. Allow Root and Error paths (Fixes the browser 403 page)
+                .requestMatchers("/", "/error").permitAll()
                 
-                // FIX: Temporarily allow POST to create the first Admin user
-                // Once you create your user, you can change this to .hasRole("ADMIN")
+                // 2. Allow Swagger and Login
+                .requestMatchers(
+                    "/auth/**", 
+                    "/swagger-ui/**", 
+                    "/v3/api-docs/**", 
+                    "/swagger-ui.html",
+                    "/swagger-resources/**",
+                    "/webjars/**"
+                ).permitAll()
+                
+                // 3. Temporarily allow POST to create the first Admin user
                 .requestMatchers(HttpMethod.POST, "/api/employees").permitAll() 
                 
+                // 4. Everything else requires authentication
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
             );
