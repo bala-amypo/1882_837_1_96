@@ -1,76 +1,115 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.CapacityAnalysisResultDto;
-import com.example.demo.exception.*;
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.CapacityAlert;
+import com.example.demo.model.TeamCapacityConfig;
+import com.example.demo.repository.CapacityAlertRepository;
+import com.example.demo.repository.EmployeeProfileRepository;
+import com.example.demo.repository.LeaveRequestRepository;
+import com.example.demo.repository.TeamCapacityConfigRepository;
 import com.example.demo.service.CapacityAnalysisService;
-import com.example.demo.util.DateRangeUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class CapacityAnalysisServiceImpl implements CapacityAnalysisService {
-    private final TeamCapacityConfigRepository configRepo;
+
+    private final TeamCapacityConfigRepository capacityRepo;
+    private final EmployeeProfileRepository employeeRepo;
     private final LeaveRequestRepository leaveRepo;
     private final CapacityAlertRepository alertRepo;
 
-    // Matches the 4-argument constructor required by the Test setup
-    public CapacityAnalysisServiceImpl(TeamCapacityConfigRepository configRepo, 
-                                       EmployeeProfileRepository employeeRepo, 
-                                       LeaveRequestRepository leaveRepo, 
-                                       CapacityAlertRepository alertRepo) {
-        this.configRepo = configRepo;
+    public CapacityAnalysisServiceImpl(
+            TeamCapacityConfigRepository capacityRepo,
+            EmployeeProfileRepository employeeRepo,
+            LeaveRequestRepository leaveRepo,
+            CapacityAlertRepository alertRepo
+    ) {
+        this.capacityRepo = capacityRepo;
+        this.employeeRepo = employeeRepo;
         this.leaveRepo = leaveRepo;
         this.alertRepo = alertRepo;
     }
 
     @Override
-    @Transactional
-    public CapacityAnalysisResultDto analyzeTeamCapacity(String teamName, LocalDate start, LocalDate end) {
-        // Validation required for Test Priority 68
-        if (start == null || end == null || start.isAfter(end)) {
-            throw new BadRequestException("Start date cannot be after end date");
-        }
-        
-        // Validation required for Test Priority 67
-        TeamCapacityConfig config = configRepo.findByTeamName(teamName)
-                .orElseThrow(() -> new ResourceNotFoundException("Capacity config not found"));
+    public CapacityAnalysisResultDto analyzeTeamCapacity(
+            String teamName,
+            LocalDate start,
+            LocalDate end
+    ) {
 
-        // Validation required for Test Priority 69
-        if (config.getTotalHeadcount() <= 0) {
+        if (!DateRangeUtil.daysBetween(start, end)) {
+            throw new BadRequestException("Start date or future");
+        }
+
+     
+        TeamCapacityConfig config = capacityRepo.findByTeamName(teamName)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Capacity config not found"));
+
+ 
+        if (config.getTotalHeadcount() == null || config.getTotalHeadcount() <= 0) {
             throw new BadRequestException("Invalid total headcount");
         }
 
-        List<LocalDate> days = DateRangeUtil.daysBetween(start, end);
-        List<LeaveRequest> leaves = leaveRepo.findApprovedOverlappingForTeam(teamName, start, end);
-        
-        // Use TreeMap to ensure dates are sorted for Test Priority 66/70
-        Map<LocalDate, Double> capacityMap = new TreeMap<>();
+        int totalHeadcount = config.getTotalHeadcount();
+        int minCapacityPercent = config.getMinCapacityPercent();
+
+        List<?> activeEmployees =
+                employeeRepo.findByTeamNameAndActiveTrue(teamName);
+
+        Map<LocalDate, Double> capacityByDate = new HashMap<>();
         boolean risky = false;
 
-        for (LocalDate day : days) {
-            // FIX FOR NPE: The test provides dummy LeaveRequest objects where dates are null.
-            // Since the repository already filtered them for the range, we treat null dates
-            // as overlapping to ensure the capacity calculation matches the test's expectations.
-            long count = leaves.stream()
-                    .filter(l -> {
-                        if (l.getStartDate() == null || l.getEndDate() == null) return true;
-                        return !day.isBefore(l.getStartDate()) && !day.isAfter(l.getEndDate());
-                    })
-                    .count();
-            
-            double cap = ((double)(config.getTotalHeadcount() - count) / config.getTotalHeadcount()) * 100.0;
-            capacityMap.put(day, cap);
+        LocalDate current = start;
 
-            // Test Priority 66: Check against threshold
-            if (cap < config.getMinCapacityPercent()) {
+        while (!current.isAfter(end)) {
+
+            int onLeaveCount =
+                    leaveRepo.findApprovedOverlappingForTeam(
+                            teamName, current, current).size();
+
+            double availablePercent =
+                    ((double) (totalHeadcount - onLeaveCount) / totalHeadcount) * 100;
+
+            capacityByDate.put(current, availablePercent);
+
+            if (availablePercent < minCapacityPercent) {
                 risky = true;
-                alertRepo.save(new CapacityAlert(teamName, day, "HIGH", "Risk Alert"));
+
+                CapacityAlert alert = new CapacityAlert(
+                        teamName,
+                        current,
+                        "LOW",
+                        "Team capacity below threshold"
+                );
+
+                alertRepo.save(alert);
             }
+
+            current = current.plusDays(1);
         }
-        return new CapacityAnalysisResultDto(risky, capacityMap);
+
+       return new CapacityAnalysisResultDto(risky, capacityByDate);
+
+    }
+
+    static class DateRangeUtil {
+
+        private DateRangeUtil() {
+        }
+
+        public static boolean daysBetween(LocalDate start, LocalDate end) {
+            if (start == null || end == null) {
+                return false;
+            }
+            return !start.isAfter(end);
+        }
     }
 }
