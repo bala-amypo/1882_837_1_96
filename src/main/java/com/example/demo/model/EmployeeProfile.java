@@ -1,3 +1,4 @@
+
 package com.example.demo.model;
 
 import jakarta.persistence.*;
@@ -17,10 +18,6 @@ public class EmployeeProfile {
     private String email;
     private String teamName;
     private String role;
-    
-    // REQUIRED FOR LOGIN
-    private String password; 
-    
     private Boolean active = true;
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -34,10 +31,6 @@ public class EmployeeProfile {
 
     public EmployeeProfile() {}
 
-    // Getters and Setters...
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmployeeId() { return employeeId; }
@@ -51,7 +44,10 @@ public class EmployeeProfile {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
     public void setActive(Boolean active) { this.active = active; }
+
+    // Test requires this naming specifically
     public Boolean isActive() { return active; }
+    
     public Set<EmployeeProfile> getColleagues() { return colleagues; }
     public void setColleagues(Set<EmployeeProfile> colleagues) { this.colleagues = colleagues; }
 }
