@@ -52,7 +52,7 @@ public class OpenApiConfig {
                                         .description("Enter JWT token")))
                 .servers(List.of(
                         // ✅ YOUR URL — unchanged
-                        new Server().url("https://9069.pro604cr.amypo.ai")
+                        new Server().url("https://9209.408procr.amypo.ai/")
                 ));
     }
 }
